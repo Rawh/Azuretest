@@ -5,7 +5,7 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update \ 
-    && apt install -y wget openssh-server sudo curl
+    && apt install -y wget openssh-server sudo curl iputils-ping dnsutils
 
 # install Azure-CLI according to https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -30,4 +30,6 @@ RUN echo 'willem ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER root
 
 EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+
+# CMD ["/usr/sbin/sshd", "-D"]
+CMD ["ping", "-4", "localhost"]
