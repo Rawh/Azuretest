@@ -41,3 +41,6 @@ az keyvault certificate download --name $VAULTCERTNAME --vault-name $VAULTNAME -
 echo "certfile location: ${CERTLOC}/${CERTPROJ}/${CERTFILE}"
 chmod 644 "${CERTLOC}/${CERTPROJ}/${CERTFILE}"
 update-ca-certificates
+
+# Execute the original CMD passed as arguments to the script
+exec "$@"
