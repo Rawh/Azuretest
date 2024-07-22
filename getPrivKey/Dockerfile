@@ -13,13 +13,11 @@ RUN apt update \
     && apt install -y curl wget \
     && apt clean
 
-RUN mkdir -p "${CERTLOC}/${CERTPROJ}" \
-    && chmod 755 "${CERTLOC}/${CERTPROJ}"
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN az login --identity \
-    && az keyvault certificate download --name $VAULTCERTNAME --vault-name $VAULTNAME --file "${CERTLOC}/${CERTPROJ}/${CERTFILE}}" \
-    && chmod 644 "${CERTLOC}/${CERTPROJ}/${CERTFILE}}" \
-    && update-ca-certificates
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 EXPOSE 22
 
