@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 VAULTNAME="$VAULTNAME"
 VAULTCERTNAME="$VAULTCERTNAME"
 CERTLOC="/usr/local/share/ca-certificates/"
@@ -30,11 +32,12 @@ check_sudo_installed
 check_sudo_privileges
 
 
-
+echo "locations -> ${CERTLOC}/${CERTPROJ}" 
 mkdir -p "${CERTLOC}/${CERTPROJ}" 
 chmod 755 "${CERTLOC}/${CERTPROJ}"
 
 az login --identity
 az keyvault certificate download --name $VAULTCERTNAME --vault-name $VAULTNAME --file "${CERTLOC}/${CERTPROJ}/${CERTFILE}}"
-chmod 644 "${CERTLOC}/${CERTPROJ}/${CERTFILE}}"
+echo "certfile location: ${CERTLOC}/${CERTPROJ}/${CERTFILE}"
+chmod 644 "${CERTLOC}/${CERTPROJ}/${CERTFILE}"
 update-ca-certificates
