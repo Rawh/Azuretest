@@ -1,46 +1,38 @@
 #!/bin/bash
 
+# echo commands
 set -x
 
-# VAULTNAME="$VAULTNAME"
-# VAULTCERTNAME="$VAULTCERTNAME"
-# CERTLOC="/usr/local/share/ca-certificates/"
-# CERTPROJ="azure"
-# CERTFILE="azure.fw.custom.cert.crt"
+# Export variables to be available to everyone who logs in
+echo " " >> /etc/profile
+echo "export VAULTNAME=${VAULTNAME}" >> /etc/profile
+echo "export VAULTCERTNAME=${VAULTCERTNAME}" >> /etc/profile
+echo "export CERTLOC=${CERTLOC}" >> /etc/profile
+echo "export CERTPROJ=${CERTPROJ}" >> /etc/profile
+echo "export CERTFILE=${CERTFILE}" >> /etc/profile
 
+# Create the directory for certificates and set permissions
+CERT_PATH="${CERTLOC}/${CERTPROJ}"
+echo "Creating certificate directory: ${CERT_PATH}"
+mkdir -p "${CERT_PATH}"
+chmod 755 "${CERT_PATH}"
+echo " "
 
-# Function to check if sudo is installed
-check_sudo_installed() {
-    if command -v sudo > /dev/null 2>&1; then
-        echo "sudo is installed."
-    else
-        echo "!!! sudo not installed, cannot continue"
-    fi
-}
-
-# Function to check if the current user has sudo privileges
-check_sudo_privileges() {
-    if sudo -n true 2>/dev/null; then
-        echo "User $(whoami) has sudo privileges."
-    else
-        echo "User $(whoami) does not have sudo privileges."
-    fi
-}
-
-# Run the checks
-check_sudo_installed
-check_sudo_privileges
-
-
-echo "locations -> ${CERTLOC}/${CERTPROJ}" 
-mkdir -p "${CERTLOC}/${CERTPROJ}" 
-chmod 755 "${CERTLOC}/${CERTPROJ}"
-
+# Log in to Azure and download the certificate
+echo "Logging in to Azure..."
 az login --identity
-az keyvault certificate download --name $VAULTCERTNAME --vault-name $VAULTNAME --file "${CERTLOC}/${CERTPROJ}/${CERTFILE}"
-echo "certfile location: ${CERTLOC}/${CERTPROJ}/${CERTFILE}"
-chmod 644 "${CERTLOC}/${CERTPROJ}/${CERTFILE}"
+echo " "
+
+CERT_FULL_PATH="${CERT_PATH}/${CERTFILE}"
+echo "Downloading certificate to: ${CERT_FULL_PATH}"
+az keyvault certificate download --name "${VAULTCERTNAME}" --vault-name "${VAULTNAME}" --file "${CERT_FULL_PATH}"
+chmod 644 "${CERT_FULL_PATH}"
+echo " "
+
+# Update CA certificates
+echo "Updating CA certificates..."
 update-ca-certificates
+echo " "
 
 # Execute the original CMD passed as arguments to the script
 exec "$@"
