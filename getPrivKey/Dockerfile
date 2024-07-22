@@ -13,7 +13,7 @@ RUN apt update \
     && apt install -y curl wget \
     && apt clean
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY getPrivKey/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
