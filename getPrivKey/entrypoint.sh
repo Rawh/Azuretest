@@ -2,11 +2,11 @@
 
 set -x
 
-VAULTNAME="$VAULTNAME"
-VAULTCERTNAME="$VAULTCERTNAME"
-CERTLOC="/usr/local/share/ca-certificates/"
-CERTPROJ="azure"
-CERTFILE="azure.fw.custom.cert.crt"
+# VAULTNAME="$VAULTNAME"
+# VAULTCERTNAME="$VAULTCERTNAME"
+# CERTLOC="/usr/local/share/ca-certificates/"
+# CERTPROJ="azure"
+# CERTFILE="azure.fw.custom.cert.crt"
 
 
 # Function to check if sudo is installed
@@ -37,7 +37,7 @@ mkdir -p "${CERTLOC}/${CERTPROJ}"
 chmod 755 "${CERTLOC}/${CERTPROJ}"
 
 az login --identity
-az keyvault certificate download --name $VAULTCERTNAME --vault-name $VAULTNAME --file "${CERTLOC}/${CERTPROJ}/${CERTFILE}}"
+az keyvault certificate download --name $VAULTCERTNAME --vault-name $VAULTNAME --file "${CERTLOC}/${CERTPROJ}/${CERTFILE}"
 echo "certfile location: ${CERTLOC}/${CERTPROJ}/${CERTFILE}"
 chmod 644 "${CERTLOC}/${CERTPROJ}/${CERTFILE}"
 update-ca-certificates
