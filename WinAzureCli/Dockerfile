@@ -15,7 +15,7 @@ RUN powershell -Command \
     New-Item -Path C:\tmp -Type Directory
     # | Out-Null
 
-COPY vc_redist.x64.exe "C:\tmp\vc_redist.x64.exe"
+# COPY vc_redist.x64.exe "C:\tmp\vc_redist.x64.exe"
 
 # RUN powershell.exe -command \
 #     # Install winget dependencies
