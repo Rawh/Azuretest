@@ -40,8 +40,15 @@ RUN powershell.exe -Command \
     Start-Service sshd; \
     Set-Service -name sshd -StartupType 'Automatic'
 
-RUN net user %ADMUSR% %ADMPWD% /add; \
-    net localgroup Administrators %ADMUSR% /add
+# RUN net user %ADMUSR% %ADMPWD% /add; \
+#     net localgroup Administrators %ADMUSR% /add
+
+RUN powershell -Command \
+    $ErrorActionPreference = 'Stop'; \
+    $securestring = ConvertTo-SecureString $env:ADMPWD -AsPlainText -Force; \
+    New-LocalUser -Name $env:ADMUSR -Password $securestring -PasswordNeverExpires; \
+    Add-LocalGroupMember -Member (Get-LocalUser -Name $env:ADMUSR) -Group "administrators"
+
 
 RUN powershell -Command \
     Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0; \
