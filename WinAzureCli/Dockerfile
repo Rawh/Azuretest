@@ -34,8 +34,9 @@ RUN powershell -Command \
     Add-LocalGroupMember -Member (Get-LocalUser -Name $env:ADMUSR) -Group "administrators"
 
 RUN powershell -Command \
-    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0; \
-    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"; 
+    $ErrorActionPreference = 'Stop'; \
+    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+    # Enable-NetFirewallRule -DisplayGroup "Remote Desktop"; 
 
 # EXPOSE 22
 EXPOSE 3389
