@@ -33,6 +33,12 @@ if (-not $env:tenantId) {
 } elseif (-not $env:SPN01AZCLIPWD) {
     write-error "# `$SPN01AZCLIPWD not found!"
     exit 1
+} elseif (-not $env:VAULTCERTNAME) {
+    write-error "# `$VAULTCERTNAME not found!"
+    exit 1
+} elseif (-not $env:VAULTNAME) {
+    write-error "# `$VAULTNAME not found!"
+    exit 1
 }
 
 
