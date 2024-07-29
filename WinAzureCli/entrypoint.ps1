@@ -23,6 +23,19 @@ Register-ArgumentCompleter -Native -CommandName az -ScriptBlock {
 # tab completion working like bash
 Set-PSReadLineKeyHandler -Key tab -Function MenuComplete
 
+# Check required env variables
+if (-not $env:tenantId) {
+    write-error "# `$tenantId not found!"
+    exit 1
+} elseif (-not $env:SPN01AZCLICID) {
+    write-error "# `$SPN01AZCLICID not found!"
+    exit 1
+} elseif (-not $env:SPN01AZCLIPWD) {
+    write-error "# `$SPN01AZCLIPWD not found!"
+    exit 1
+}
+
+
 $az = $(az logout 2>&1 | ConvertFrom-Json)
 
 $az = $(az login --service-principal --tenant $($env:tenantid) --username $env:SPN01AZCLICID --password $env:SPN01AZCLIPWD | ConvertFrom-Json)
@@ -31,6 +44,7 @@ if (-not $az) {
     Write-Error -Message "####"
     Write-Error -Message "## Cannot login"
     Write-Error -Message "####"
+    exit 1
 }
 
 if (-not (Test-Path "C:\tmp")) {
@@ -86,3 +100,5 @@ $store.Close()
 #     PublicKey = $checkCert.GetPublicKeyString()
 #     SignatureAlgorithm = $checkCert.SignatureAlgorithm.FriendlyName
 # }
+
+Start-Process -NoNewWindow cmd.exe -ArgumentList "/c ping -t localhost"
