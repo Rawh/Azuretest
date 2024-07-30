@@ -42,7 +42,7 @@ if (-not $env:tenantId) {
 }
 
 
-$az = $(az logout 2>&1 | ConvertFrom-Json)
+$az = $(az logout)
 
 $az = $(az login --service-principal --tenant $($env:tenantid) --username $env:SPN01AZCLICID --password $env:SPN01AZCLIPWD | ConvertFrom-Json)
 
@@ -60,12 +60,19 @@ if (-not (Test-Path "C:\tmp")) {
 $certPath = "C:\tmp\$($env:CERTFILE)"
 $certDownload = $(az keyvault certificate download --name "$($env:VAULTCERTNAME)" --vault-name "$($env:VAULTNAME)" --file $($certPath))
 
-$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
-$cert.Import($certPath)
+# Read the cert (chain) from file
+$certBytes = [System.IO.File]::ReadAllBytes($certPath)
+$certCollection = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2Collection
+$certCollection.Import($certBytes)
 
 $store = New-Object System.Security.Cryptography.X509Certificates.X509Store -ArgumentList "Root", "LocalMachine"
 $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
-$store.Add($cert)
+
+# Add each certificate in the chain to the Root store
+foreach ($cert in $certCollection) {
+    $store.Add($cert)
+}
+
 $store.Close()
 
 # ###
