@@ -65,15 +65,31 @@ $certBytes = [System.IO.File]::ReadAllBytes($certPath)
 $certCollection = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2Collection
 $certCollection.Import($certBytes)
 
-$store = New-Object System.Security.Cryptography.X509Certificates.X509Store -ArgumentList "Root", "LocalMachine"
-$store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
-
+# $store = New-Object System.Security.Cryptography.X509Certificates.X509Store -ArgumentList "Root", "LocalMachine"
+# $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+# 
 # Add each certificate in the chain to the Root store
-foreach ($cert in $certCollection) {
-    $store.Add($cert)
+# foreach ($cert in $certCollection) {
+#     $store.Add($cert)
+# }
+# 
+# $store.Close()
+
+$stores = @(
+    New-Object System.Security.Cryptography.X509Certificates.X509Store -ArgumentList "Root", "LocalMachine",
+    New-Object System.Security.Cryptography.X509Certificates.X509Store -ArgumentList "CA", "LocalMachine"
+)
+
+foreach ($store in $stores) {
+    $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+    foreach ($cert in $certCollection) {
+        $store.Add($cert)
+    }
+    $store.Close()
 }
 
-$store.Close()
+
+
 
 # ###
 # # Check online cert for validity
