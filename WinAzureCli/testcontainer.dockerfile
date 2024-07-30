@@ -5,6 +5,6 @@ RUN powershell.exe -command \
 
 COPY WinAzureCli\\entrypoint.ps1 "c:\tmp\entrypoint.ps1"
 
-ENTRYPOINT ["C:\tmp\entrypoint.ps1"]
+ENTRYPOINT ["powershell.exe", "-file", "C:\\tmp\\entrypoint.ps1"]
 
 CMD ["cmd.exe", "/c", "ping", "-t", "localhost"]
