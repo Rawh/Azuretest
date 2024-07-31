@@ -1,4 +1,3 @@
-# FROM mcr.microsoft.com/azure-cli
 FROM ubuntu:22.04
 
 # Set environment variables to avoid user prompts during the installation
@@ -37,4 +36,3 @@ USER root
 EXPOSE 22
 
 CMD ["/usr/sbin/sshd", "-D"]
-# CMD ["ping", "-4", "localhost"]
